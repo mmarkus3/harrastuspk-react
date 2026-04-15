@@ -1,11 +1,10 @@
 export const firebaseConfig = {
-  "projectId": "harjoituspk-1cfe6",
-  "appId": "1:180791120123:web:081769af95a4cc6ca9605e",
-  "databaseURL": "https://harjoituspk-1cfe6.firebaseio.com",
-  "storageBucket": "harjoituspk-1cfe6.appspot.com",
-  "locationId": "europe-west",
-  "apiKey": "AIzaSyD8z52gO9hKcFLFxRHYKLk7FSYONE-HIJM",
-  "authDomain": "harjoituspk-1cfe6.firebaseapp.com",
-  "messagingSenderId": "180791120123",
-  "measurementId": "G-L0TG50Y35P"
+  apiKey: "AIzaSyBv4Os77vVa4Ru3VkO_vok-68cc3ryBYR8",
+  authDomain: "harjoituspk-1cfe6.firebaseapp.com",
+  databaseURL: "https://harjoituspk-1cfe6.firebaseio.com",
+  projectId: "harjoituspk-1cfe6",
+  storageBucket: "harjoituspk-1cfe6.firebasestorage.app",
+  messagingSenderId: "180791120123",
+  appId: "1:180791120123:web:5be4e65bfb5bfcc5a9605e",
+  measurementId: "G-C94FR8XFRT"
 };

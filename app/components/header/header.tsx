@@ -54,29 +54,21 @@ export default function Header({ initialUser }: HeaderProps) {
       </Link>
       {user ? (
         <>
-          <div className="profile">
-            <p>
+          <ul className='menu bg-base-200 lg:menu-horizontal rounded-box'>
+            <li>
               <Image
-                className="profileImage"
                 src={user.photoURL || "/profile.svg"}
                 alt={user.email!}
+                width={50}
+                height={50}
               />
-              {user.displayName}
-            </p>
-
-            <div className="menu">
-              ...
-              <ul>
-                <li>{user.displayName}</li>
-
-                <li>
-                  <Button onClick={handleSignOut}>
-                    Sign Out
-                  </Button>
-                </li>
-              </ul>
-            </div>
-          </div>
+            </li>
+            <li>
+              <Button onClick={handleSignOut}>
+                Sign Out
+              </Button>
+            </li>
+          </ul>
         </>
       ) : (
         <div className="profile">

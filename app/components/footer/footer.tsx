@@ -1,34 +1,35 @@
+'use client'
+
 import { User } from 'firebase/auth';
 import Link from 'next/link';
+import { usePathname } from 'next/navigation'
 
 interface FooterProps {
   initialUser: User | null;
 }
 
 export default function Footer({ initialUser }: FooterProps) {
+  const pathname = usePathname()
   return (
     <footer className="p-4 bg-gray-100 text-center">
       {initialUser && (
-        <nav className="flex items-center justify-center gap-4 mt-1 mb-4">
-          <Link className="flex h-12 w-30 items-center justify-center rounded-full border border-solid btn bg-white" href="/">
-            Koti
+        <nav className="dock">
+          <Link href="/" className={`${pathname === '/' ? 'dock-active' : ''}`}>
+            <span className="dock-label">Koti</span>
           </Link>
           <Link
-            className="flex h-12 w-30 items-center justify-center rounded-full border border-solid btn bg-white"
             href="/records"
+            className={`${pathname === '/records' ? 'dock-active' : ''}`}
           >
-            Ennätykset
+            <span className="dock-label">Ennätykset</span>
           </Link>
           <Link
-            className="flex h-12 w-30 items-center justify-center rounded-full border border-solid btn bg-white"
+            className={`${pathname === '/history' ? 'dock-active' : ''}`}
             href="/history"
           >
-            Historia
+            <span className="dock-label">Historia</span>
           </Link>
         </nav>)}
-      <p className="text-sm text-gray-600">
-        &copy; {new Date().getFullYear()} Harjoituspäiväkirja. All rights reserved.
-      </p>
     </footer>
   );
 }
