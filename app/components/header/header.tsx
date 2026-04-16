@@ -34,6 +34,8 @@ function useUserSession(initialUser: User | null) {
   return initialUser;
 }
 
+
+
 export default function Header({ initialUser }: HeaderProps) {
   const user = useUserSession(initialUser);
 

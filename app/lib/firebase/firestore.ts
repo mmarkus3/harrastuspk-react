@@ -25,7 +25,7 @@ export async function getList<T>(collectionKey: string, db = firestore, queryCon
       id: doc.id,
       ...doc.data(),
       // Only plain objects can be passed to Client Components from Server Components
-      date: doc.data().date.toDate(),
+      date: doc.data().date?.toDate(),
     } as T;
   });
 }

@@ -2,6 +2,7 @@ import { getList } from '@/app/lib/firebase/firestore';
 import { getAuthenticatedAppForUser } from '@/app/lib/firebase/serverApp';
 import { Athlete } from '@/app/models/athlete';
 import { getFirestore, where } from "firebase/firestore";
+import SelectAthlete from './selectAthlete';
 
 export const dynamic = "force-dynamic";
 
@@ -14,14 +15,7 @@ export default async function Athletes() {
     <div className="card bg-base-100 w-96 shadow-sm">
       <div className="card-body">
         <h3 className="card-title">Urheilijat</h3>
-        <select defaultValue="Valitse urheilija" className="select">
-          <option disabled={true}>Valitse urheilija</option>
-          {athletes.map((athlete) => (
-            <option key={athlete.id} value={athlete.id}>
-              {athlete.name}
-            </option>
-          ))}
-        </select>
+        <SelectAthlete athletes={athletes} />
       </div>
     </div>
   );
