@@ -22,13 +22,13 @@ export default function SelectAthlete({ athletes }: { athletes: Athlete[] }) {
 
   if (showSelection) {
     return (
-      <select defaultValue="Valitse urheilija" className="select" value={athlete?.id} onChange={(e) => {
+      <select className="select" value={athlete?.id} onChange={(e) => {
         const selectedAthlete = athletes.find((a) => a.id === e.target.value);
         if (selectedAthlete) {
           changeAthlete(selectedAthlete);
         }
       }}>
-        <option disabled={true}>Valitse urheilija</option>
+        <option key={undefined} disabled={true}>Valitse urheilija</option>
         {athletes.map((athlete) => (
           <option key={athlete.id} value={athlete.id}>
             {athlete.name}
