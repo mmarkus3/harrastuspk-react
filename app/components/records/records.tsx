@@ -1,6 +1,10 @@
 import { Record } from '@/app/models/record';
 
-export default async function Records({ records }: { records: Record[] }) {
+export default function Records({ records }: { records: Record[] }) {
+  if (records.length === 0) {
+    return <p className="mt-4 text-gray-500">Ei ennätyksiä</p>;
+  }
+
   return (<table className="table w-full">
     <thead>
       <tr>

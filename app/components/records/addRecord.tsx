@@ -26,7 +26,7 @@ export default function AddRecord({ recordTypes, athlete }: { recordTypes?: Reco
                 <label htmlFor="recordType" className="block text-sm font-medium text-gray-700">
                   Ennätystyyppi
                 </label>
-                <select id="recordType" className="mt-1 block w-full py-2 px-3 border border-gray-300 bg-white rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500">
+                <select id="recordType" name="recordType" className="mt-1 block w-full py-2 px-3 border border-gray-300 bg-white rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500">
                   <option value="">Valitse ennätystyyppi</option>
                   {recordTypes?.map((type) => (
                     <option key={type.key} value={type.key}>
@@ -41,22 +41,22 @@ export default function AddRecord({ recordTypes, athlete }: { recordTypes?: Reco
                 </label>
                 <input
                   type="text"
+                  name="recordValue"
                   id="recordValue"
                   className="mt-1 block w-full py-2 px-3 border border-gray-300 bg-white rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500"
                   placeholder="Syötä ennätysarvo"
                 />
               </div>
               <input type="hidden" name="athlete" value={athlete || undefined} />
+              <div className="modal-action">
+                <button type="submit" value="confirm" className="btn btn-primary">
+                  Tallenna
+                </button>
+                <Button onClick={handleClose}>
+                  Sulje
+                </Button>
+              </div>
             </form>
-          </div>
-          <div className="modal-action">
-            <button type="submit" value="confirm" className="btn btn-primary">
-              Tallenna
-            </button>
-            {/* Navigates back to the base URL - closing the modal */}
-            <Button onClick={handleClose}>
-              Sulje
-            </Button>
           </div>
         </div>
       </dialog>

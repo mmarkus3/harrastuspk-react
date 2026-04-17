@@ -8,6 +8,7 @@ import {
 } from 'firebase/auth';
 
 import { auth } from "./clientApp";
+import { deleteCookie } from 'cookies-next';
 
 export function onAuthStateChanged(cb: NextOrObserver<User>) {
   return _onAuthStateChanged(auth, cb);
@@ -29,6 +30,7 @@ export async function signInWithGoogle() {
 
 export async function signOut() {
   try {
+    await deleteCookie('__athlete');
     return auth.signOut();
   } catch (error) {
     console.error("Error signing out with Google", error);

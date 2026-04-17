@@ -1,24 +1,39 @@
-import { getFirestore, where } from 'firebase/firestore';
-import { getAuthenticatedAppForUser } from '../lib/firebase/serverApp';
-import { getList } from '../lib/firebase/firestore';
+'use client';
+import { where } from 'firebase/firestore';
+import { getSnapshotList } from '../lib/firebase/firestore';
 import { Record } from '../models/record';
-import { getAthleteFromCookie } from '../lib/cookieStore';
 import Records from '../components/records/records';
 import { RecordType } from '../models/recordType';
 import AddRecord from '../components/records/addRecord';
+import { useEffect, useState } from 'react';
+import { useAthleteStore } from '../lib/athleteStore';
 
-export default async function Page() {
-  const { firebaseServerApp } = await getAuthenticatedAppForUser();
-  const selectedAthlete = await getAthleteFromCookie();
-  const queryConstraints = [where('athlete', '==', selectedAthlete)];
-  const recordTypes = await getList<RecordType>('record-types', getFirestore(firebaseServerApp));
-  const records = (await getList<Record>('records', getFirestore(firebaseServerApp), queryConstraints)).map((record) => {
-    const recordType = recordTypes.find((type) => type.key === record.type);
-    return {
-      ...record,
-      name: recordType ? recordType.name_fi : record.type,
-    };
-  });
+export default function Page() {
+  const [recordTypes, setRecordTypes] = useState<RecordType[]>([]);
+  const [records, setRecords] = useState<Record[]>([]);
+
+  const { athlete } = useAthleteStore();
+
+  useEffect(() => {
+    if (athlete) {
+      return getSnapshotList<RecordType>('record-types', (data) => (setRecordTypes(data)));
+    }
+  }, [athlete]);
+
+  useEffect(() => {
+    if (athlete && recordTypes.length > 0) {
+      const queryConstraints = [where('athlete', '==', athlete?.id)];
+      return getSnapshotList<Record>('records',
+        (data) => (setRecords(data.map((record) => {
+          const recordType = recordTypes.find((type) => type.key === record.type);
+          return {
+            ...record,
+            name: recordType ? recordType.name_fi : record.type,
+          }
+        }))),
+        queryConstraints);
+    }
+  }, [athlete, recordTypes]);
 
   return (
     <div className="flex flex-col flex-1 items-center justify-center bg-zinc-50 font-sans dark:bg-black">
@@ -27,7 +42,7 @@ export default async function Page() {
           <h1 className="max-w-xs text-3xl font-semibold leading-10 tracking-tight text-black dark:text-zinc-50">
             Ennätykset
           </h1>
-          <AddRecord recordTypes={recordTypes} athlete={selectedAthlete} />
+          {athlete && <AddRecord recordTypes={recordTypes} athlete={athlete.id} />}
         </div>
         <Records records={records} />
       </main>

@@ -45,3 +45,24 @@ export async function getList<T>(collectionKey: string, db = firestore, queryCon
     } as T;
   });
 }
+
+export function getSnapshotList<T>(collectionKey: string, cb: (results: T[]) => void, queryConstraints: QueryFieldFilterConstraint[] = []) {
+  if (typeof cb !== "function") {
+    console.log("Error: The callback parameter is not a function");
+    return;
+  }
+
+  const q = query(collection(firestore, collectionKey), ...queryConstraints);
+
+  return onSnapshot(q, (querySnapshot) => {
+    const results = querySnapshot.docs.map((doc) => {
+      return {
+        id: doc.id,
+        ...doc.data(),
+        // Only plain objects can be passed to Client Components from Server Components
+        date: doc.data().date?.toDate(),
+      } as T;
+    });
+    cb(results);
+  });
+}
