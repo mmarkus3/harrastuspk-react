@@ -10,13 +10,18 @@ import { useAthleteStore } from '../lib/athleteStore';
 
 export default function Page() {
   const [recordTypes, setRecordTypes] = useState<RecordType[]>([]);
+  const [usableRecordTypes, setUsableRecordTypes] = useState<RecordType[]>([]);
   const [records, setRecords] = useState<Record[]>([]);
 
   const { athlete } = useAthleteStore();
 
   useEffect(() => {
     if (athlete) {
-      return getSnapshotList<RecordType>('record-types', (data) => (setRecordTypes(data)));
+      return getSnapshotList<RecordType>('record-types',
+        (data) => {
+          setUsableRecordTypes(data);
+          setRecordTypes(data);
+        });
     }
   }, [athlete]);
 
@@ -26,6 +31,9 @@ export default function Page() {
       return getSnapshotList<Record>('records',
         (data) => (setRecords(data.map((record) => {
           const recordType = recordTypes.find((type) => type.key === record.type);
+          if (recordType) {
+            setUsableRecordTypes((prev) => prev.filter((type) => type.key !== recordType.key));
+          }
           return {
             ...record,
             name: recordType ? recordType.name_fi : record.type,
@@ -42,7 +50,7 @@ export default function Page() {
           <h1 className="max-w-xs text-3xl font-semibold leading-10 tracking-tight text-black dark:text-zinc-50">
             Ennätykset
           </h1>
-          {athlete && <AddRecord recordTypes={recordTypes} athlete={athlete.id} />}
+          {athlete && <AddRecord recordTypes={usableRecordTypes} athlete={athlete.id} />}
         </div>
         <Records records={records} />
       </main>
