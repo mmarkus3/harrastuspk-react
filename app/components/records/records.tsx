@@ -1,4 +1,5 @@
 import { Record } from '@/app/models/record';
+import EditRecord from './editRecord';
 
 export default function Records({ records }: { records: Record[] }) {
   if (records.length === 0) {
@@ -11,6 +12,7 @@ export default function Records({ records }: { records: Record[] }) {
         <th>Päivämäärä</th>
         <th>Laji</th>
         <th>Ennätys</th>
+        <th></th>
       </tr>
     </thead>
     <tbody>
@@ -19,6 +21,7 @@ export default function Records({ records }: { records: Record[] }) {
           <td>{record.date.toLocaleDateString('fi-FI')}</td>
           <td>{record.name ?? record.type}</td>
           <td>{record.value}</td>
+          <td><EditRecord record={record} /></td>
         </tr>
       ))}
     </tbody>

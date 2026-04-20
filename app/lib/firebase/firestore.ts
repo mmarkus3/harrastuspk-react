@@ -28,7 +28,6 @@ export async function updateRecord(collectionKey: string, id: string, data: obje
   const docRef = doc(firestore, collectionKey, id);
   await updateDoc(docRef, {
     ...data,
-    date: Timestamp.now(),
   });
 }
 

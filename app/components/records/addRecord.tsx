@@ -21,7 +21,10 @@ export default function AddRecord({ recordTypes, athlete }: { recordTypes?: Reco
         <div className="modal-box">
           <h3 className="text-2xl font-bold text-gray-900">Lisää ennätys</h3>
           <div className="mt-2 px-7 py-3">
-            <form action={handleRecordSave} onSubmit={handleClose}>
+            <form action={handleRecordSave} onSubmit={() => {
+              handleClose();
+            }}>
+              <div className="btn btn-sm btn-circle btn-ghost absolute right-2 top-2" onClick={handleClose}>✕</div>
               <div className="mb-4">
                 <label htmlFor="recordType" className="block text-sm font-medium text-gray-700">
                   Ennätystyyppi
@@ -52,9 +55,6 @@ export default function AddRecord({ recordTypes, athlete }: { recordTypes?: Reco
                 <button type="submit" value="confirm" className="btn btn-primary">
                   Tallenna
                 </button>
-                <Button onClick={handleClose}>
-                  Sulje
-                </Button>
               </div>
             </form>
           </div>
