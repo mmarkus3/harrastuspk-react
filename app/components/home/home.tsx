@@ -1,5 +1,6 @@
 import Athletes from '../athletes/athletes';
 import { getAuthenticatedAppForUser } from '@/app/lib/firebase/serverApp';
+import Trainings from '../trainings/trainings';
 
 export default async function Home() {
   const { currentUser } = await getAuthenticatedAppForUser();
@@ -7,13 +8,15 @@ export default async function Home() {
   return currentUser ? (
     <>
       <h1 className="max-w-xs text-3xl font-semibold leading-10 tracking-tight text-black dark:text-zinc-50">Harjoituspäiväkirja</h1>
-      <div className="card bg-base-100 w-96 shadow-sm">
+      <p className="text-sm">Tervetuloa harjoituspäiväkirjaan! Kirjaa ylös harjoituksesi ja seuraa edistymistäsi.</p>
+      <div className="card bg-base-100 w-96 shadow-sm sm:w-full sm:mb-6">
+        <Athletes />
+      </div>
+      <div className="card bg-base-100 w-96 shadow-sm sm:w-full">
         <div className="card-body">
-
-          <p>Tervetuloa harjoituspäiväkirjaan! Kirjaa ylös harjoituksesi ja seuraa edistymistäsi.</p>
+          <Trainings />
         </div>
       </div>
-      <Athletes />
     </>
   ) : (
     <div className="home">

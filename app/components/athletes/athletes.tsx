@@ -12,11 +12,8 @@ export default async function Athletes() {
   const athletes = await getList<Athlete>('athletes', getFirestore(firebaseServerApp), queryConstraints);
 
   return (
-    <div className="card bg-base-100 w-96 shadow-sm">
-      <div className="card-body">
-        <h3 className="card-title">Urheilijat</h3>
-        <SelectAthlete athletes={athletes} />
-      </div>
+    <div className="card-body">
+      <SelectAthlete athletes={athletes} />
     </div>
   );
 }
