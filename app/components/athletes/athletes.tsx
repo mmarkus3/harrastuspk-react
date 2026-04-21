@@ -1,19 +1,26 @@
-import { getList } from '@/app/lib/firebase/firestore';
-import { getAuthenticatedAppForUser } from '@/app/lib/firebase/serverApp';
+import { getSnapshotList } from '@/app/lib/firebase/firestore';
 import { Athlete } from '@/app/models/athlete';
-import { getFirestore, where } from "firebase/firestore";
+import { where } from "firebase/firestore";
 import SelectAthlete from './selectAthlete';
+import { useUser } from '@/app/lib/getUser';
+import { useEffect, useState } from 'react';
 
 export const dynamic = "force-dynamic";
 
-export default async function Athletes() {
-  const { firebaseServerApp, currentUser } = await getAuthenticatedAppForUser();
-  const queryConstraints = [where('users', 'array-contains', currentUser.email)];
-  const athletes = await getList<Athlete>('athletes', getFirestore(firebaseServerApp), queryConstraints);
+export default function Athletes() {
+  const user = useUser();
+  const [athletes, setAthletes] = useState<Athlete[]>([]);
+
+  useEffect(() => {
+    if (user) {
+      const queryConstraints = [where('users', 'array-contains', user.email)];
+      getSnapshotList<Athlete>('athletes', (items) => {
+        setAthletes(items);
+      }, queryConstraints);
+    }
+  }, [user]);
 
   return (
-    <div className="card-body">
-      <SelectAthlete athletes={athletes} />
-    </div>
+    <SelectAthlete athletes={athletes} />
   );
 }

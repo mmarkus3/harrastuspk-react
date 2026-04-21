@@ -31,6 +31,22 @@ export async function updateRecord(collectionKey: string, id: string, data: obje
   });
 }
 
+export async function getRecord<T>(collectionKey: string, id: string, cb: (result: T | null) => void) {
+  const docRef = doc(firestore, collectionKey, id);
+  const docSnap = await getDoc(docRef);
+  if (docSnap.exists()) {
+    const result = {
+      id: docSnap.id,
+      ...docSnap.data(),
+      // Only plain objects can be passed to Client Components from Server Components
+      date: docSnap.data().date?.toDate(),
+    } as T;
+    cb(result);
+  } else {
+    cb(null);
+  }
+}
+
 export async function getList<T>(collectionKey: string, db = firestore, queryConstraints: QueryFieldFilterConstraint[] = []) {
   const q = query(collection(db, collectionKey), ...queryConstraints);
 

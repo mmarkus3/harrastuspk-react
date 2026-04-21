@@ -1,15 +1,18 @@
-'use client';
-import React, { useEffect } from 'react';
-import Link from 'next/link';
+"use client";
+import React, { useEffect } from "react";
+import Link from "next/link";
 import {
   signInWithGoogle,
   signOut,
   onIdTokenChanged,
-} from '../../lib/firebase/auth';
-import { setCookie, deleteCookie } from 'cookies-next';
-import Image from 'next/image';
-import Button from '../button/button';
-import { User } from 'firebase/auth';
+} from "../../lib/firebase/auth";
+import { setCookie, deleteCookie } from "cookies-next";
+import Button from "../button/button";
+import { User } from "firebase/auth";
+import { FaSignOutAlt } from 'react-icons/fa';
+import { FaPerson } from 'react-icons/fa6';
+import { useAthleteStore } from '@/app/lib/athleteStore';
+import Athletes from '../athletes/athletes';
 
 interface HeaderProps {
   initialUser: User | null;
@@ -20,9 +23,9 @@ function useUserSession(initialUser: User | null) {
     return onIdTokenChanged(async (user: User | null) => {
       if (user) {
         const idToken = await user.getIdToken();
-        await setCookie('__session', idToken);
+        await setCookie("__session", idToken);
       } else {
-        await deleteCookie('__session');
+        await deleteCookie("__session");
       }
       if (initialUser?.uid === user?.uid) {
         return;
@@ -38,6 +41,7 @@ function useUserSession(initialUser: User | null) {
 
 export default function Header({ initialUser }: HeaderProps) {
   const user = useUserSession(initialUser);
+  const { athlete } = useAthleteStore();
 
   const handleSignOut = (event: React.MouseEvent<HTMLAnchorElement>) => {
     event.preventDefault();
@@ -50,24 +54,19 @@ export default function Header({ initialUser }: HeaderProps) {
   };
 
   return (
-    <header className='flex items-center justify-between p-4 bg-gray-100'>
+    <header className="flex items-center justify-between p-4 bg-gray-100">
       <Link href="/" className="logo">
         Harjoituspäiväkirja
       </Link>
       {user ? (
         <>
-          <ul className='menu bg-base-200 lg:menu-horizontal rounded-box'>
+          <ul className="menu bg-base-200 menu-horizontal rounded-box">
             <li>
-              <Image
-                src={user.photoURL || "/profile.svg"}
-                alt={user.email!}
-                width={50}
-                height={50}
-              />
+              <Athletes />
             </li>
             <li>
               <Button onClick={handleSignOut}>
-                Sign Out
+                <FaSignOutAlt></FaSignOutAlt>
               </Button>
             </li>
           </ul>

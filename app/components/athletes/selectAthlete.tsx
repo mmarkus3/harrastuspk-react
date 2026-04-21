@@ -7,25 +7,27 @@ import Button from '../button/button';
 
 export default function SelectAthlete({ athletes }: { athletes: Athlete[] }) {
   const { changeAthlete, athlete } = useAthleteStore();
-  const [showSelection, setShowSelection] = useState(true);
   const [selectedAthlete, setSelectedAthlete] = useState<Athlete | null>(athlete);
+  const [showSelect, setShowSelect] = useState(false);
 
   useEffect(() => {
-    if (athlete) {
+    if (athlete && athlete.name === '') {
       const athleteFromList = athletes.find((a) => a.id === athlete.id);
       if (athleteFromList) {
         setSelectedAthlete(athleteFromList);
+        changeAthlete(athleteFromList);
       }
-      setShowSelection(false);
     }
   }, [athlete, athletes]);
 
-  if (showSelection) {
+  if (showSelect) {
     return (
       <select className="select" value={athlete?.id} onChange={(e) => {
         const selectedAthlete = athletes.find((a) => a.id === e.target.value);
         if (selectedAthlete) {
           changeAthlete(selectedAthlete);
+          setSelectedAthlete(selectedAthlete);
+          setShowSelect(false);
         }
       }}>
         <option key={undefined} disabled={true}>Valitse urheilija</option>
@@ -36,11 +38,8 @@ export default function SelectAthlete({ athletes }: { athletes: Athlete[] }) {
         ))}
       </select>);
   } else {
-    return (<div className="flex flex-col gap-4">
-      <p>Valittu urheilija: {selectedAthlete?.name}</p>
-      <Button onClick={() => setShowSelection(true)}>
-        Vaihda
-      </Button>
+    return (<div className="flex flex-col gap-4" onClick={() => setShowSelect(true)}>
+      {selectedAthlete?.name}
     </div>);
   }
 
