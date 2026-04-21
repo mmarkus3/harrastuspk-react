@@ -16,11 +16,9 @@ import {
 
 import { firestore } from './clientApp';
 
-export async function saveRecord(collectionKey: string, data: object) {
-  const docRef = await addDoc(collection(firestore, collectionKey), {
-    ...data,
-    date: Timestamp.now(),
-  });
+export async function saveRecord(collectionKey: string, data: object, setDate = true) {
+  const recordData = setDate ? { ...data, date: Timestamp.now() } : data;
+  const docRef = await addDoc(collection(firestore, collectionKey), recordData);
   return docRef.id;
 }
 

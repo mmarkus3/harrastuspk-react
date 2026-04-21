@@ -38,5 +38,5 @@ export async function handleTrainingSave(data: FormData) {
     date: training.date,
     deleted: false,
     done: false,
-  });
+  }, false);
 }

@@ -1,9 +1,7 @@
 'use client';
-
 import { useAthleteStore } from '@/app/lib/athleteStore';
 import { Athlete } from '@/app/models/athlete';
 import { useEffect, useState } from 'react';
-import Button from '../button/button';
 
 export default function SelectAthlete({ athletes }: { athletes: Athlete[] }) {
   const { changeAthlete, athlete } = useAthleteStore();
