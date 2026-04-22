@@ -10,7 +10,13 @@ import { handleTrainingSave } from './actions';
 import { FaEdit } from 'react-icons/fa';
 import { Modal } from '../modal/modal';
 
-export function AddTraining({ selectedDate, training, initialTrainingTypes }: { selectedDate?: Date; training?: Training; initialTrainingTypes: RecordType[] }) {
+interface AddTrainingProps {
+  selectedDate?: Date;
+  training?: Training;
+  initialTrainingTypes: RecordType[];
+}
+
+export function AddTraining({ selectedDate, training, initialTrainingTypes }: AddTrainingProps) {
   const [isOpen, setIsOpen] = useState(false);
 
   const handleOpen = () => {
@@ -22,7 +28,6 @@ export function AddTraining({ selectedDate, training, initialTrainingTypes }: { 
   };
 
   const { athlete } = useAthleteStore();
-  const [trainingDate, setTrainingDate] = useState<Date>(selectedDate || new Date());
   const [trainingTypes, setTrainingTypes] = useState<RecordType[]>(initialTrainingTypes);
 
   useEffect(() => {
@@ -57,8 +62,7 @@ export function AddTraining({ selectedDate, training, initialTrainingTypes }: { 
                 type="date"
                 id="trainingDate"
                 name="trainingDate"
-                defaultValue={trainingDate.toISOString().split('T')[0]}
-                onChange={(e) => setTrainingDate(new Date(e.target.value))}
+                defaultValue={(selectedDate || new Date()).toISOString().split('T')[0]}
                 className="mt-1 block w-full py-2 px-3 border border-gray-300 bg-white rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500"
               />
             </div>

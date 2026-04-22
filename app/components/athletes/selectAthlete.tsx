@@ -5,14 +5,12 @@ import { useEffect, useState } from 'react';
 
 export default function SelectAthlete({ athletes }: { athletes: Athlete[] }) {
   const { changeAthlete, athlete } = useAthleteStore();
-  const [selectedAthlete, setSelectedAthlete] = useState<Athlete | null>(athlete);
   const [showSelect, setShowSelect] = useState(false);
 
   useEffect(() => {
     if (athlete && athlete.name === '') {
       const athleteFromList = athletes.find((a) => a.id === athlete.id);
       if (athleteFromList) {
-        setSelectedAthlete(athleteFromList);
         changeAthlete(athleteFromList);
       }
     }
@@ -24,7 +22,6 @@ export default function SelectAthlete({ athletes }: { athletes: Athlete[] }) {
         const selectedAthlete = athletes.find((a) => a.id === e.target.value);
         if (selectedAthlete) {
           changeAthlete(selectedAthlete);
-          setSelectedAthlete(selectedAthlete);
           setShowSelect(false);
         }
       }}>
@@ -37,7 +34,7 @@ export default function SelectAthlete({ athletes }: { athletes: Athlete[] }) {
       </select>);
   } else {
     return (<div className="flex flex-col gap-4" onClick={() => setShowSelect(true)}>
-      {selectedAthlete?.name}
+      {athlete?.name}
     </div>);
   }
 

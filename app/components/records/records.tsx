@@ -21,7 +21,7 @@ export default function Records({ records }: { records: Record[] }) {
           <td>{record.date.toLocaleDateString('fi-FI')}</td>
           <td>{record.name ?? record.type}</td>
           <td>{record.value}</td>
-          <td><EditRecord record={record} /></td>
+          <td><EditRecord record={record} key={record.id} /></td>
         </tr>
       ))}
     </tbody>
