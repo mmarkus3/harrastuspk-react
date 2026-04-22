@@ -25,11 +25,13 @@ export function AddTraining({ selectedDate, training, initialTrainingTypes }: { 
   }, [athlete, initialTrainingTypes]);
 
   const handleOpen = () => {
-    document.getElementById(`addTrainingModal_${training?.id}`)?.showModal();
+    const modal = document.getElementById(`addTrainingModal_${training?.id}`) as HTMLDialogElement;
+    modal?.showModal();
   };
 
   const handleClose = () => {
-    document.getElementById(`addTrainingModal_${training?.id}`)?.close();
+    const modal = document.getElementById(`addTrainingModal_${training?.id}`) as HTMLDialogElement;
+    modal?.close();
   };
 
   return (

@@ -9,11 +9,13 @@ export default function EditRecord({ record }: { record: Record }) {
   const updateWithHistory = handleRecordUpdate.bind(null, history)
 
   const handleOpen = () => {
-    document.getElementById('editRecordModal_' + record.id)?.showModal();
+    const modal = document.getElementById('editRecordModal_' + record.id) as HTMLDialogElement;
+    modal?.showModal();
   };
 
   const handleClose = () => {
-    document.getElementById('editRecordModal_' + record.id)?.close();
+    const modal = document.getElementById('editRecordModal_' + record.id) as HTMLDialogElement;
+    modal?.close();
   };
 
   return (

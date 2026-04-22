@@ -5,11 +5,13 @@ import { handleRecordSave } from '@/app/records/actions';
 
 export default function AddRecord({ recordTypes, athlete }: { recordTypes?: RecordType[], athlete?: string | null }) {
   const handleOpen = () => {
-    document.getElementById('addRecordModal')?.showModal();
+    const modal = document.getElementById('addRecordModal') as HTMLDialogElement;
+    modal?.showModal();
   };
 
   const handleClose = () => {
-    document.getElementById('addRecordModal')?.close();
+    const modal = document.getElementById('addRecordModal') as HTMLDialogElement;
+    modal?.close();
   };
 
   return (
