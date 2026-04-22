@@ -23,7 +23,7 @@ export async function handleRecordUpdate(history: { date: Date; value: string }[
     type: item.get('recordType')?.toString(),
     value: item.get('recordValue')?.toString(),
     athlete: item.get('athlete')?.toString(),
-    date: item.get('recordDate') ? new Date(item.get('recordDate')?.toString()) : undefined,
+    date: item.get('recordDate') ? new Date(item.get('recordDate')?.toString() ?? new Date()) : undefined,
     history: history ? history : [],
   };
   if (!record.value) {
