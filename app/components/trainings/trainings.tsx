@@ -31,7 +31,7 @@ export default function Trainings() {
     if (athlete) {
       const queryConstraints = [where('athlete', '==', athlete?.id), where('deleted', '!=', true)];
       return getSnapshotList<Training>('items',
-        (data) => (setTrainings(data.map((record) => {
+        (data) => (setTrainings(data.filter((training) => training.date.toDateString() === selectedDate.toDateString()).map((record) => {
           const trainingType = trainingTypes.find((type) => type.key === record.type);
           return {
             ...record,
@@ -49,7 +49,7 @@ export default function Trainings() {
         <AddTraining selectedDate={selectedDate} initialTrainingTypes={trainingTypes} />
       </div>
       <SelectDate date={selectedDate} onChange={setSelectedDate} />
-      {trainings.filter((training) => training.date.toDateString() === selectedDate.toDateString()).length > 0 ? (
+      {trainings.length > 0 ? (
         <table className="table w-full">
           <thead>
             <tr>
@@ -60,7 +60,7 @@ export default function Trainings() {
             </tr>
           </thead>
           <tbody>
-            {trainings.filter((training) => training.date.toDateString() === selectedDate.toDateString()).map((training) => (
+            {trainings.map((training) => (
               <tr key={training.id}>
                 <td>{training.name ?? training.type}</td>
                 <td>{training.duration ?? '-'}</td>

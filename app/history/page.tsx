@@ -1,10 +1,96 @@
+'use client';
+import { useEffect, useState } from 'react';
+import { useAthleteStore } from '../lib/athleteStore';
+import { Training } from '../models/training';
+import { RecordType } from '../models/recordType';
+import { getSnapshotList } from '../lib/firebase/firestore';
+import { where } from 'firebase/firestore';
+import { endOfWeek, parse, startOfWeek, compareAsc } from 'date-fns';
+import { SelectWeek } from '../components/date/selectWeek';
+import Button from '../components/button/button';
+import { FaCircleCheck } from 'react-icons/fa6';
+import { handleTrainingDone } from '../components/trainings/actions';
+
 export default function Page() {
+  const { athlete } = useAthleteStore();
+  const [selectedWeek, setSelectedWeek] = useState<[Date, Date]>([startOfWeek(new Date(), { weekStartsOn: 1 }), endOfWeek(new Date(), { weekStartsOn: 1 })]);
+  const [trainings, setTrainings] = useState<Training[]>([]);
+  const [trainingTypes, setTrainingTypes] = useState<RecordType[]>([]);
+
+  function handleWeekChange(value: string) {
+    const [year, weekWithW] = value.split('-');
+    const week = weekWithW.replace('W', '');
+    const startDate = parse(week, 'I', new Date());
+    startDate.setFullYear(+year);
+    const endDate = endOfWeek(startDate, { weekStartsOn: 1 });
+    setSelectedWeek([startDate, endDate]);
+  }
+
+  useEffect(() => {
+    if (athlete) {
+      return getSnapshotList<RecordType>('training-types',
+        (data) => {
+          setTrainingTypes(data);
+        });
+    }
+  }, [athlete]);
+
+  useEffect(() => {
+    if (athlete) {
+      const [start, end] = selectedWeek;
+      const queryConstraints = [where('athlete', '==', athlete?.id), where('deleted', '!=', true)];
+      return getSnapshotList<Training>('items',
+        (data) => (setTrainings(data.filter((it) => it.date >= start && it.date <= end).map((record) => {
+          const trainingType = trainingTypes.find((type) => type.key === record.type);
+          return {
+            ...record,
+            name: trainingType ? trainingType.name_fi : record.type,
+          }
+        }).sort((a, b) => compareAsc(a.date, b.date)))),
+        queryConstraints);
+    }
+  }, [athlete, selectedWeek, trainingTypes]);
+
   return (
     <div className="flex flex-col flex-1 items-center justify-center bg-zinc-50 font-sans dark:bg-black">
-      <main className="flex flex-1 w-full max-w-4xl flex-col items-center justify-between py-32 px-16 bg-white dark:bg-black sm:items-start">
-        <h1 className="max-w-xs text-3xl font-semibold leading-10 tracking-tight text-black dark:text-zinc-50">
-          Historia
-        </h1>
+      <main className="flex flex-1 w-full max-w-4xl flex-col items-center py-32 px-16 bg-white dark:bg-black sm:items-start">
+        <div className="w-full flex justify-between">
+          <h3 className="max-w-xs text-3xl font-semibold leading-10 tracking-tight text-black dark:text-zinc-50">
+            Historia
+          </h3>
+          <SelectWeek date={new Date()} onChange={handleWeekChange} />
+        </div>
+        {trainings.length > 0 ? (
+          <table className="table w-full">
+            <thead>
+              <tr>
+                <th>Päivämäärä</th>
+                <th>Laji</th>
+                <th>Kesto (min)</th>
+                <th>Kuvaus</th>
+                <th></th>
+              </tr>
+            </thead>
+            <tbody>
+              {trainings.map((training) => (
+                <tr key={training.id}>
+                  <td>{training.date.toLocaleDateString('fi')}</td>
+                  <td>{training.name ?? training.type}</td>
+                  <td>{training.duration ?? '-'}</td>
+                  <td>{training.desc ?? '-'}</td>
+                  <td>
+                    {training.done && <span>Kuitattu</span>}
+                    {!training.done && <Button onClick={() => handleTrainingDone(training)}>
+                      <FaCircleCheck className="text-green-500"></FaCircleCheck>
+                    </Button>}
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        ) : (
+          <p className="mt-4 text-gray-500">Ei harjoituksia valitulla aikavälillä. Yritä valita toinen viikko.</p>
+        )}
       </main>
     </div>
   );
