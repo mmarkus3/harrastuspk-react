@@ -16,6 +16,7 @@ export default function Page() {
   const [selectedWeek, setSelectedWeek] = useState<[Date, Date]>([startOfWeek(new Date(), { weekStartsOn: 1 }), endOfWeek(new Date(), { weekStartsOn: 1 })]);
   const [trainings, setTrainings] = useState<Training[]>([]);
   const [trainingTypes, setTrainingTypes] = useState<RecordType[]>([]);
+  const [summary, setSummary] = useState<number>(0);
 
   function handleWeekChange(value: string) {
     const [year, weekWithW] = value.split('-');
@@ -40,13 +41,18 @@ export default function Page() {
       const [start, end] = selectedWeek;
       const queryConstraints = [where('athlete', '==', athlete?.id), where('deleted', '!=', true)];
       return getSnapshotList<Training>('items',
-        (data) => (setTrainings(data.filter((it) => it.date >= start && it.date <= end).map((record) => {
-          const trainingType = trainingTypes.find((type) => type.key === record.type);
-          return {
-            ...record,
-            name: trainingType ? trainingType.name_fi : record.type,
-          }
-        }).sort((a, b) => compareAsc(a.date, b.date)))),
+        (data) => {
+          const trainings = data.filter((it) => it.date >= start && it.date <= end);
+          const summary = trainings.filter((it) => it.done).reduce((prev, curr) => prev + (curr.duration ?? 0), 0);
+          setSummary(summary);
+          setTrainings(trainings.map((record) => {
+            const trainingType = trainingTypes.find((type) => type.key === record.type);
+            return {
+              ...record,
+              name: trainingType ? trainingType.name_fi : record.type,
+            }
+          }).sort((a, b) => compareAsc(a.date, b.date)));
+        },
         queryConstraints);
     }
   }, [athlete, selectedWeek, trainingTypes]);
@@ -61,33 +67,36 @@ export default function Page() {
           <SelectWeek date={new Date()} onChange={handleWeekChange} />
         </div>
         {trainings.length > 0 ? (
-          <table className="table w-full">
-            <thead>
-              <tr>
-                <th>Päivämäärä</th>
-                <th>Laji</th>
-                <th>Kesto (min)</th>
-                <th>Kuvaus</th>
-                <th></th>
-              </tr>
-            </thead>
-            <tbody>
-              {trainings.map((training) => (
-                <tr key={training.id}>
-                  <td>{training.date.toLocaleDateString('fi')}</td>
-                  <td>{training.name ?? training.type}</td>
-                  <td>{training.duration ?? '-'}</td>
-                  <td>{training.desc ?? '-'}</td>
-                  <td>
-                    {training.done && <span>Kuitattu</span>}
-                    {!training.done && <Button onClick={() => handleTrainingDone(training)}>
-                      <FaCircleCheck className="text-green-500"></FaCircleCheck>
-                    </Button>}
-                  </td>
+          <>
+            <table className="table w-full">
+              <thead>
+                <tr>
+                  <th>Päivämäärä</th>
+                  <th>Laji</th>
+                  <th>Kesto (min)</th>
+                  <th>Kuvaus</th>
+                  <th></th>
                 </tr>
-              ))}
-            </tbody>
-          </table>
+              </thead>
+              <tbody>
+                {trainings.map((training) => (
+                  <tr key={training.id}>
+                    <td>{training.date.toLocaleDateString('fi')}</td>
+                    <td>{training.name ?? training.type}</td>
+                    <td>{training.duration ?? '-'}</td>
+                    <td>{training.desc ?? '-'}</td>
+                    <td>
+                      {training.done && <span>Kuitattu</span>}
+                      {!training.done && <Button onClick={() => handleTrainingDone(training)}>
+                        <FaCircleCheck className="text-green-500"></FaCircleCheck>
+                      </Button>}
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+            <p className="mt-4 text-gray-500">Tehtyjä harjoituksia yhteensä {summary} minuuttia.</p>
+          </>
         ) : (
           <p className="mt-4 text-gray-500">Ei harjoituksia valitulla aikavälillä. Yritä valita toinen viikko.</p>
         )}
