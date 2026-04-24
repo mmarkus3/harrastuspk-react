@@ -1,12 +1,22 @@
 'use client';
 
-import React from 'react';
+import React, { PropsWithChildren } from 'react';
 
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
-export default function Button({ onClick, children, disabled }: { onClick?: any; children: React.ReactNode; disabled?: boolean }) {
+interface ButtonProps extends PropsWithChildren {
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  onClick?: any;
+  disabled?: boolean;
+  type?: "button" | "submit" | "reset";
+  classNames?: string[];
+}
+
+export default function Button({ onClick, children, disabled, type = 'button', classNames }: ButtonProps) {
+  const finalClassNames = `btn rounded ${classNames?.join(' ')}`;
+
   return (
     <button
-      className="btn rounded"
+      className={finalClassNames}
+      type={type}
       onClick={onClick}
       disabled={disabled}
     >

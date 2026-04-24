@@ -14,7 +14,7 @@ export default function SelectAthlete({ athletes }: { athletes: Athlete[] }) {
         changeAthlete(athleteFromList);
       }
     }
-  }, [athlete, athletes]);
+  }, [athlete, athletes, changeAthlete]);
 
   if (showSelect) {
     return (

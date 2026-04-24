@@ -2,13 +2,16 @@
 import { Training } from '@/app/models/training';
 import Button from '../button/button';
 import { useAthleteStore } from '@/app/lib/athleteStore';
-import { useEffect, useState } from 'react';
+import { useCallback, useEffect, useState } from 'react';
 import { RecordType } from '@/app/models/recordType';
-import { getRecord } from '@/app/lib/firebase/firestore';
+import { getRecord, getSnapshotList } from '@/app/lib/firebase/firestore';
 import { Template } from '@/app/models/template';
 import { handleTrainingSave } from './actions';
 import { FaEdit } from 'react-icons/fa';
 import { Modal } from '../modal/modal';
+import { ChangeTemplate } from '../templates/changeTemplate';
+import { where } from 'firebase/firestore';
+import { useUser } from '@/app/lib/getUser';
 
 interface AddTrainingProps {
   selectedDate?: Date;
@@ -17,7 +20,12 @@ interface AddTrainingProps {
 }
 
 export function AddTraining({ selectedDate, training, initialTrainingTypes }: AddTrainingProps) {
+  const { athlete } = useAthleteStore();
+  const user = useUser();
+  const [trainingTypes, setTrainingTypes] = useState<RecordType[]>(initialTrainingTypes);
   const [isOpen, setIsOpen] = useState(false);
+  const [selectedTemplate, setSelectedTemplate] = useState<Template>();
+  const [templates, setTemplates] = useState<Template[]>([]);
 
   const handleOpen = () => {
     setIsOpen(true);
@@ -27,18 +35,28 @@ export function AddTraining({ selectedDate, training, initialTrainingTypes }: Ad
     setIsOpen(false);
   };
 
-  const { athlete } = useAthleteStore();
-  const [trainingTypes, setTrainingTypes] = useState<RecordType[]>(initialTrainingTypes);
+  const handleTemplateSelection = useCallback((template: Template) => {
+    setSelectedTemplate(template);
+    setTrainingTypes(initialTrainingTypes.filter((it) => template.types.includes(it.id!)));
+  }, [initialTrainingTypes]);
 
   useEffect(() => {
     if (athlete?.template) {
       getRecord<Template>('templates', athlete.template, (data) => {
         if (data) {
-          setTrainingTypes(initialTrainingTypes.filter((it) => data.types.includes(it.id!)));
+          handleTemplateSelection(data);
         }
       });
     }
-  }, [athlete, initialTrainingTypes]);
+
+  }, [athlete, handleTemplateSelection]);
+
+  useEffect(() => {
+    if (user) {
+      const queryConstrains = [where('author', '==', user.uid)];
+      getSnapshotList<Template>('templates', (data) => setTemplates(data), queryConstrains);
+    }
+  }, [user]);
 
   return (
     <>
@@ -66,20 +84,26 @@ export function AddTraining({ selectedDate, training, initialTrainingTypes }: Ad
                 className="mt-1 block w-full py-2 px-3 border border-gray-300 bg-white rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500"
               />
             </div>
-            <div className="mb-4">
-              <label htmlFor="trainingType" className="block text-sm font-medium text-gray-700">
-                Laji
-              </label>
-              <select id="trainingType" name="trainingType"
-                defaultValue={training?.type ?? ''}
-                className="mt-1 block w-full py-2 px-3 border border-gray-300 bg-white rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500">
-                <option value="">Valitse laji</option>
-                {trainingTypes.map((type) => (
-                  <option key={type.key} value={type.key}>
-                    {type.name_fi}
-                  </option>
-                ))}
-              </select>
+            <div className="mb-4 flex justify-between items-center">
+              <div className="w-80">
+                <label htmlFor="trainingType" className="block text-sm font-medium text-gray-700">
+                  Laji
+                </label>
+                <select id="trainingType" name="trainingType"
+                  defaultValue={training?.type ?? ''}
+                  className="mt-1 block w-full py-2 px-3 border border-gray-300 bg-white rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500">
+                  <option value="">Valitse laji</option>
+                  {trainingTypes.map((type) => (
+                    <option key={type.key} value={type.key}>
+                      {type.name_fi}
+                    </option>
+                  ))}
+                </select>
+              </div>
+              <div className="flex flex-col">
+                <label>Pohja</label>
+                <ChangeTemplate template={selectedTemplate} templates={templates} trainingTypes={initialTrainingTypes} onChange={handleTemplateSelection} />
+              </div>
             </div>
             <div className="mb-4">
               <label htmlFor="duration" className="block text-sm font-medium text-gray-700">
