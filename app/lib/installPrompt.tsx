@@ -28,7 +28,7 @@ export function InstallPrompt() {
             {' '}
             ⎋{' '}
           </span>
-          ja sitten &quot;Add to Home Screen&quot;
+          ja sitten &quot;Lisää Koti-valikkoon&quot;
           <span role="img" aria-label="plus icon">
             {' '}
             ➕{' '}

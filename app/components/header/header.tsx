@@ -41,7 +41,6 @@ function useUserSession(initialUser: User | null) {
 
 export default function Header({ initialUser }: HeaderProps) {
   const user = useUserSession(initialUser);
-  const { athlete } = useAthleteStore();
 
   const handleSignOut = (event: React.MouseEvent<HTMLAnchorElement>) => {
     event.preventDefault();

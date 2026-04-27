@@ -5,7 +5,7 @@ import { Training } from '../models/training';
 import { RecordType } from '../models/recordType';
 import { getSnapshotList } from '../lib/firebase/firestore';
 import { where } from 'firebase/firestore';
-import { endOfWeek, parse, startOfWeek, compareAsc } from 'date-fns';
+import { endOfWeek, parse, startOfWeek, compareAsc, format } from 'date-fns';
 import { SelectWeek } from '../components/date/selectWeek';
 import Button from '../components/button/button';
 import { FaCircleCheck } from 'react-icons/fa6';
@@ -72,7 +72,7 @@ export default function Page() {
               {trainings.map((training) => (
                 <li key={training.id} className="list-row">
                   <div className="text-xl font-thin opacity-30 tabular-nums">
-                    {training.date.toLocaleDateString('fi')}
+                    {format(training.date, 'd.M.yy')}
                   </div>
                   <div>
                     {training.name ?? training.type} ({training.duration} min)
