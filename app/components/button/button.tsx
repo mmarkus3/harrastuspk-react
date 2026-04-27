@@ -11,7 +11,7 @@ interface ButtonProps extends PropsWithChildren {
 }
 
 export default function Button({ onClick, children, disabled, type = 'button', classNames }: ButtonProps) {
-  const finalClassNames = `btn rounded ${classNames?.join(' ')}`;
+  const finalClassNames = `btn ${classNames?.join(' ')}`;
 
   return (
     <button

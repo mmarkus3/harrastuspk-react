@@ -7,7 +7,7 @@ import { useAthleteStore } from '@/app/lib/athleteStore';
 import { where } from 'firebase/firestore';
 import { getSnapshotList } from '@/app/lib/firebase/firestore';
 import { RecordType } from '@/app/models/recordType';
-import { FaCircleCheck, FaTrash } from 'react-icons/fa6';
+import { FaTrash } from 'react-icons/fa6';
 import Button from '../button/button';
 import { handleTrainingDelete, handleTrainingDone } from './actions';
 import { AddTraining } from './addTraining';
@@ -50,41 +50,35 @@ export default function Trainings() {
       </div>
       <SelectDate date={selectedDate} onChange={setSelectedDate} />
       {trainings.length > 0 ? (
-        <table className="table w-full">
-          <thead>
-            <tr>
-              <th>Laji</th>
-              <th>Kesto (min)</th>
-              <th>Kuvaus</th>
-              <th></th>
-            </tr>
-          </thead>
-          <tbody>
-            {trainings.map((training) => (
-              <tr key={training.id}>
-                <td>{training.name ?? training.type}</td>
-                <td>{training.duration ?? '-'}</td>
-                <td>{training.desc ?? '-'}</td>
-                <td>
-                  <div className="md:flex gap-2">
-                    <Button onClick={() => handleTrainingDone(training)} disabled={training.done}>
-                      {!training.done && <FaCircleCheck className="text-green-500"></FaCircleCheck>}
-                      {training.done && <span>Kuitattu</span>}
-                    </Button>
-                    {!training.done && (
-                      <AddTraining training={training} initialTrainingTypes={trainingTypes} selectedDate={training.date} />
-                    )}
-                    {!training.done && (
-                      <Button onClick={() => handleTrainingDelete(training)}>
-                        <FaTrash className="text-red-500"></FaTrash>
-                      </Button>
-                    )}
-                  </div>
-                </td>
-              </tr>
-            ))}
-          </tbody>
-        </table>
+        <ul className="list bg-base-100 rounded-box shadow-md">
+          {trainings.map((training) => (
+            <li key={training.id} className="list-row">
+              <div className="text-xl font-thin opacity-30 tabular-nums">
+                {training.duration ?? '-'}<br />min
+              </div>
+              <div>
+                {training.name ?? training.type}
+              </div>
+              <p className="list-col-wrap text-xs">
+                {training.desc ?? '-'}<br />
+                <Button onClick={() => handleTrainingDone(training)} disabled={training.done} classNames={['btn-ghost']}>
+                  {!training.done && <span className="text-green-500">Kuittaa</span>}
+                  {training.done && <span>Kuitattu</span>}
+                </Button>
+              </p>
+              <div className="flex flex-wrap max-w-20 justify-end">
+                {!training.done && (
+                  <AddTraining training={training} initialTrainingTypes={trainingTypes} selectedDate={training.date} classNames={['btn-ghost']} />
+                )}
+                {!training.done && (
+                  <Button onClick={() => handleTrainingDelete(training)} classNames={['btn-ghost']}>
+                    <FaTrash className="text-red-500"></FaTrash>
+                  </Button>
+                )}
+              </div>
+            </li>
+          ))}
+        </ul>
       ) : (
         <p className="mt-4 text-gray-500">Ei harjoituksia valitulla päivällä. Yritä valita toinen päivä.</p>
       )}

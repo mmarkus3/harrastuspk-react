@@ -59,7 +59,7 @@ export default function Page() {
 
   return (
     <div className="flex flex-col flex-1 items-center justify-center bg-zinc-50 font-sans dark:bg-black">
-      <main className="flex flex-1 w-full max-w-4xl flex-col items-center py-32 px-16 bg-white dark:bg-black sm:items-start">
+      <main className="flex flex-1 w-full max-w-4xl flex-col items-center py-16 px-8 bg-white dark:bg-black sm:items-start">
         <div className="w-full flex justify-between">
           <h3 className="max-w-xs text-3xl font-semibold leading-10 tracking-tight text-black dark:text-zinc-50">
             Historia
@@ -68,33 +68,25 @@ export default function Page() {
         </div>
         {trainings.length > 0 ? (
           <>
-            <table className="table w-full">
-              <thead>
-                <tr>
-                  <th>Päivämäärä</th>
-                  <th>Laji</th>
-                  <th>Kesto (min)</th>
-                  <th>Kuvaus</th>
-                  <th></th>
-                </tr>
-              </thead>
-              <tbody>
-                {trainings.map((training) => (
-                  <tr key={training.id}>
-                    <td>{training.date.toLocaleDateString('fi')}</td>
-                    <td>{training.name ?? training.type}</td>
-                    <td>{training.duration ?? '-'}</td>
-                    <td>{training.desc ?? '-'}</td>
-                    <td>
-                      {training.done && <span>Kuitattu</span>}
-                      {!training.done && <Button onClick={() => handleTrainingDone(training)}>
-                        <FaCircleCheck className="text-green-500"></FaCircleCheck>
-                      </Button>}
-                    </td>
-                  </tr>
-                ))}
-              </tbody>
-            </table>
+            <ul className="list bg-base-100 rounded-box shadow-md w-full">
+              {trainings.map((training) => (
+                <li key={training.id} className="list-row">
+                  <div className="text-xl font-thin opacity-30 tabular-nums">
+                    {training.date.toLocaleDateString('fi')}
+                  </div>
+                  <div>
+                    {training.name ?? training.type} ({training.duration} min)
+                  </div>
+                  <p className="list-col-wrap text-xs">
+                    {training.desc ?? '-'}
+                  </p>
+                  <Button onClick={() => handleTrainingDone(training)} disabled={training.done} classNames={['btn-ghost']}>
+                    {!training.done && <span className="text-green-500">Kuittaa</span>}
+                    {training.done && <span>Kuitattu</span>}
+                  </Button>
+                </li>
+              ))}
+            </ul>
             <p className="mt-4 text-gray-500">Tehtyjä harjoituksia yhteensä {summary} minuuttia.</p>
           </>
         ) : (

@@ -17,9 +17,10 @@ interface AddTrainingProps {
   selectedDate?: Date;
   training?: Training;
   initialTrainingTypes: RecordType[];
+  classNames?: string[];
 }
 
-export function AddTraining({ selectedDate, training, initialTrainingTypes }: AddTrainingProps) {
+export function AddTraining({ selectedDate, training, initialTrainingTypes, classNames }: AddTrainingProps) {
   const { athlete } = useAthleteStore();
   const user = useUser();
   const [trainingTypes, setTrainingTypes] = useState<RecordType[]>(initialTrainingTypes);
@@ -62,7 +63,7 @@ export function AddTraining({ selectedDate, training, initialTrainingTypes }: Ad
     <>
       {!training ? (
         <Button onClick={handleOpen}>Lisää harjoitus</Button>
-      ) : <Button onClick={handleOpen}>
+      ) : <Button onClick={handleOpen} classNames={classNames ?? []}>
         <FaEdit></FaEdit>
       </Button>}
       <Modal isOpen={isOpen}>
