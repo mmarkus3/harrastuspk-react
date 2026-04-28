@@ -6,6 +6,7 @@ import { useEffect, useState } from 'react';
 export default function SelectAthlete({ athletes }: { athletes: Athlete[] }) {
   const { changeAthlete, athlete } = useAthleteStore();
   const [showSelect, setShowSelect] = useState(false);
+  const isShowVisible = athlete == null || showSelect;
 
   useEffect(() => {
     if (athlete && athlete.name === '') {
@@ -14,9 +15,12 @@ export default function SelectAthlete({ athletes }: { athletes: Athlete[] }) {
         changeAthlete(athleteFromList);
       }
     }
+    if (athlete == null && athletes?.length > 0) {
+      changeAthlete(athletes[0]);
+    }
   }, [athlete, athletes, changeAthlete]);
 
-  if (showSelect) {
+  if (isShowVisible) {
     return (
       <select className="select" value={athlete?.id} onChange={(e) => {
         const selectedAthlete = athletes.find((a) => a.id === e.target.value);
